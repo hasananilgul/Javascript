@@ -18,6 +18,7 @@ var queriedId = parseInt(prompt("Bir ID girin:"));
 
 var queriedPerson = queryPersonById(queriedId);
 
+
 if (queriedPerson) {
     console.log('Kişi Adı:', queriedPerson.isim);
     
@@ -26,6 +27,7 @@ if (queriedPerson) {
             console.log('Araba Modeli:', car.model);
             console.log('Üretim Yılı:', car.year || 'Bilgi yok');
         });
+        
     } else {
         console.log('Araba Modeli:', queriedPerson.arac.model);
         console.log('Üretim Yılı:', queriedPerson.arac.year || 'Bilgi yok');
