@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basit Bir JavaScript Oyunu</title>
+    <style>
+        #game-container {
+            width: 400px;
+            height: 400px;
+            border: 1px solid black;
+            position: relative;
+        }
+        #player {
+            width: 30px;
+            height: 30px;
+            background-color: blue;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <h1>Basit Bir JavaScript Oyunu</h1>
+    <div id="game-container">
+        <div id="player"></div>
+    </div>
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        const player = document.getElementById('player');
+
+        let playerX = 0;
+        let playerY = 0;
+
+        player.style.left = playerX + 'px';
+        player.style.top = playerY + 'px';
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight' && playerX < gameContainer.clientWidth - player.clientWidth) {
+                playerX += 10;
+            } else if (event.key === 'ArrowLeft' && playerX > 0) {
+                playerX -= 10;
+            } else if (event.key === 'ArrowDown' && playerY < gameContainer.clientHeight - player.clientHeight) {
+                playerY += 10;
+            } else if (event.key === 'ArrowUp' && playerY > 0) {
+                playerY -= 10;
+            }
+
+            player.style.left = playerX + 'px';
+            player.style.top = playerY + 'px';
+        });
+    </script>
+</body>
+</html>
