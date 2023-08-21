@@ -15,7 +15,6 @@ function queryPersonById(id) {
 
 // Kullanıcıdan alınan ID ile sorgulama yapma
 var queriedId = parseInt(prompt("Bir ID girin:"));
-
 var queriedPerson = queryPersonById(queriedId);
 
 
