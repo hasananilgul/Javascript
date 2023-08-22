@@ -15,6 +15,5 @@ function Yazdir() {
     });
     document.getElementById("kutu").innerHTML = yeniMaas; 
 }
-
 var btnYaz=document.getElementById("btn");
     btnYaz.onclick=Yazdir;
