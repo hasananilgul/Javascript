@@ -24,9 +24,9 @@ function krediKart() {
     }
   
     if (sum % 10 === 0) {
-      alert("Kart Bilgileri Geçerli.");
+      alert("Kart Bilgileri GEÇERLİ :).");
     } else {
-      alert("Kart Bilgileri Geçersiz.");
+      alert("Kart Bilgileri GEÇERSİZ.");
     }
   }
   
