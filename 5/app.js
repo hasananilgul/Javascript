@@ -13,7 +13,7 @@ var yeniMaaslar = maaslar.map(function(deger){
 function Yazdir() {
     var yeniMaas = "";
     yeniMaaslar.forEach((maas) => { 
-        yeniMaas += "Yeni Maaşlar:<br>" + maas + "<br>";
+        yeniMaas += "Yeni Zamlı Maaşlar:<br>" + maas + "<br>";
     });
     document.getElementById("kutu").innerHTML = yeniMaas; 
 }
