@@ -1,3 +1,4 @@
+window.onload = showData;
 // Verileri göndermeden önce girişleri kontrol eder.
 function validateForm(){
     var isim =document.getElementById("isim").value;
@@ -85,7 +86,7 @@ function AddData() {
     document.getElementById("email").value="";
 }
 }
-
+// Veri Silme Fonksiyonu
 function deleteData(index){
     var kisiListesi;
     if(localStorage.getItem("kisiListesi") == null){
@@ -99,7 +100,7 @@ function deleteData(index){
             showData();
 
 }
-
+// Veri Güncelleme Fonksiyonu
 function updateData(index) {
     var kisiListesi;
     if (localStorage.getItem("kisiListesi") == null) {
