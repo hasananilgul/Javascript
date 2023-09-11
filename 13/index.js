@@ -21,6 +21,7 @@ router.get('/example', (req, res) => {
   res.send('Example Route');
 });
 
+
 // Kayıt ol endpoint'i
 app.post('/kayit', async (req, res) => {
   const { username, gender, email, phone, password } = req.body;
