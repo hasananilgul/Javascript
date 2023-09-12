@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const User = require('../models/user')
 const Book = require('../models/books'); // Kütüphane modelini dahil edin
 const Admin = require('../models/admin'); // Admin modelini dahil edin
 const bcrypt = require('bcrypt');
@@ -81,7 +82,7 @@ router.get('/gettall-user', async (req, res) => {
 
 // Yeni bir kullanıcı oluşturun
 router.post('/users', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { username,gender,phone, email, password } = req.body;
 
   try {
     const user = await User.create({
