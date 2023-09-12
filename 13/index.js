@@ -23,7 +23,8 @@ const Admin = require('./models/admin'); // Admin modeli
 
 // Kullanıcı rotalarını içeren router dosyasını içeri aktarır
 const userRouter = require('./router/user'); // user.js dosyasını dahil edin
-
+//const booksRouter = require('./router/books'); // books.js dosyasını dahil edin
+const adminsRouter = require('./router/admins'); // admins.js dosyasını dahil edin
 // Express uygulamasının şablon motorunu EJS olarak ayarlar
 app.set('view engine', 'ejs');
 
@@ -38,7 +39,10 @@ app.use("/", router);
 
 // API rotaları için "/api/usersBookTask/user" altında userRouter'ı kullanır
 app.use(`${API_PREFIX}user`, userRouter);
-
+//? API rotaları için "/api/usersBookTask/books" altında userRouter'ı kullanır
+//? app.use(`${API_PREFIX}books`, booksRouter);
+// API rotaları için "/api/usersBookTask/admins" altında userRouter'ı kullanır
+app.use(`${API_PREFIX}admins`, adminsRouter);
 // Uygulamayı belirtilen portta dinlemeye başlar ve konsola çalıştığını bildirir
 app.listen(port, () => {
   console.log(`Sunucu ${port} numarasında çalışıyor`);
