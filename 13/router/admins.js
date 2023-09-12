@@ -101,7 +101,7 @@ router.post('/users', async (req, res) => {
 
 // Kullanıcı güncelleme
 router.put('/users/:id', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { username,gender, email, phone, password } = req.body;
   const userId = req.params.id;
 
   try {
