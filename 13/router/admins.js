@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const Book = require('../models/books'); // Kütüphane modelini dahil edin
-const User = require('../models/user'); // Kullanıcı modelini dahil edin
+const Admin = require('../models/admin'); // Admin modelini dahil edin
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // Tüm kitapları getir
-router.get('/gettall', async (req, res) => {
+router.get('/gettall-book', async (req, res) => {
   try {
     const books = await Book.find();
     res.json(books);
@@ -68,7 +69,7 @@ router.delete('/books/:id', async (req, res) => {
 });
 
 // Tüm kullanıcıları getir
-router.get('/users', async (req, res) => {
+router.get('/gettall-user', async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -129,5 +130,110 @@ router.delete('/users/:id', async (req, res) => {
     res.status(500).json({ error: 'Kullanıcı silinirken bir hata oluştu.' });
   }
 });
+router.get('/adminKayit', (req, res) => {
+  res.render('adminKayit');
+});
+// Admin kayıt ol endpoint'i
+router.post('/adminKayit', async (req, res) => {
+  const { email, password } = req.body;
+
+  // Yeni bir admin oluştur
+  const admin = new Admin({
+    email,
+    password,
+  });
+
+  try {
+    // Admini veritabanına kaydet
+    const savedAdmin = await admin.save();
+    console.log('Admin kaydedildi:', savedAdmin);
+    // Başarılı bir yanıt gönder
+    res.send('Admin kaydı başarılı.');
+  } catch (err) {
+    // Hata durumunda hata mesajını yakalayın
+    console.error('Admin kaydı hatası:', err);
+    // Hata yanıtı gönder
+    res.status(500).send('Admin kaydı sırasında bir hata oluştu.');
+  }
+});
+
+router.get('/adminGiris', (req, res) => {
+  res.render('adminGiris');
+});
+
+// Admin giriş endpoint'i
+router.post('/adminGiris', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Veritabanından admini arayın
+    const admin = await Admin.findOne({ email });
+
+    if (admin) {
+      // Admini bulduysanız, şifreyi karşılaştırın
+      const passwordMatched = await bcrypt.compare(password, admin.password);
+
+      if (passwordMatched) {
+        // Giriş başarılı 
+        const token = jwt.sign({ email }, 'secretKey');
+        res.send('Admin girişi başarılı. Token: ' + token);
+      } else {
+        // Şifre uyuşmuyor
+        res.status(401).send('Hatalı şifre.');
+      }
+    } else {
+      // Admin bulunamadı
+      res.status(401).send('Admin bulunamadı.');
+    }
+  } catch (err) {
+    console.error('Admin giriş hatası:', err);
+    res.status(500).json({ error: 'Admin giriş işlemi sırasında bir hata oluştu.', details: err.message });
+
+  }
+});
+
+// Tüm adminleri getir
+router.get('/gettall-admin', async (req, res) => {
+  try {
+    const admin = await Admin.find();
+    res.json(admin);
+  } catch (err) {
+    console.error('Adminleri getirme hatası:', err);
+    res.status(500).json({ error: 'Adminleri getirilirken bir hata oluştu.' });
+  }
+});
+
+// Admin güncelleme
+router.put('/admins/:id', async (req, res) => {
+  const { email, password } = req.body;
+  const adminId = req.params.id;
+
+  try {
+    const admin = await Admin.findByIdAndUpdate(adminId, {
+      email,
+      password
+    });
+    res.json(admin);
+  } catch (err) {
+    console.error('Admin güncelleme hatası:', err);
+    res.status(500).json({ error: 'Admin güncellenirken bir hata oluştu.' });
+  }
+});
+
+// Admin silme
+router.delete('/admins/:id', async (req, res) => {
+  const adminId = req.params.id;
+
+  try {
+    const admin = await Admin.findByIdAndDelete(adminId);
+    res.json(admin);
+  } catch (err) {
+    console.error('Admin silme hatası:', err);
+    res.status(500).json({ error: 'Admin silinirken bir hata oluştu.' });
+  }
+});
+
+
+
 
 module.exports = router;

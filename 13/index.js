@@ -41,8 +41,8 @@ app.use("/", router);
 app.use(`${API_PREFIX}user`, userRouter);
 //? API rotaları için "/api/usersBookTask/books" altında userRouter'ı kullanır
 //? app.use(`${API_PREFIX}books`, booksRouter);
-// API rotaları için "/api/usersBookTask/admins" altında userRouter'ı kullanır
-app.use(`${API_PREFIX}admins`, adminsRouter);
+// API rotaları için "/api/usersBookTask/admin" altında userRouter'ı kullanır
+app.use(`${API_PREFIX}admin`, adminsRouter);
 // Uygulamayı belirtilen portta dinlemeye başlar ve konsola çalıştığını bildirir
 app.listen(port, () => {
   console.log(`Sunucu ${port} numarasında çalışıyor`);
