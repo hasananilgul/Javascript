@@ -66,7 +66,7 @@ router.post('/giris', async (req, res) => {
 
 
 // Kullanıcıyı Silme endpoint'i
-router.delete('/sil/:id', async (req, res) => {
+router.delete('/delete/:id', async (req, res) => {
   try {
     const userId = req.params.id.trim(); // Gelen id'den gereksiz karakterleri kaldır
     const deletedUser = await User.findByIdAndRemove(userId);
@@ -82,7 +82,7 @@ router.delete('/sil/:id', async (req, res) => {
 });
 
 // Kullanıcı Adını Güncelleme
-router.put('/updateusername/:id', async (req, res) => {
+router.put('/update-username/:id', async (req, res) => {
   try {
     const userId = req.params.id.trim();
     const newUsername = req.body.newUsername;
