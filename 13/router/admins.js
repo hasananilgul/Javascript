@@ -141,7 +141,7 @@ router.post('/adminKayit', async (req, res) => {
   // Yeni bir admin oluştur
   const admin = new Admin({
     email,
-    password,
+    password
   });
 
   try {
@@ -205,16 +205,27 @@ router.get('/gettall-admin', async (req, res) => {
 });
 
 // Admin güncelleme
-router.put('/admins/:id', async (req, res) => {
-  const { email, password } = req.body;
-  const adminId = req.params.id;
+router.put('/adminUpdate/:email', async (req, res) => {
+  const { email } = req.body;
+  const adminEmail = req.params.email;
 
   try {
-    const admin = await Admin.findByIdAndUpdate(adminId, {
-      email,
-      password
-    });
+    const admin = await Admin.findOneAndUpdate(
+      { 
+        email: adminEmail , 
+        email: email , 
+        
+      });
     res.json(admin);
+    // const { email, password } = req.body;
+    // const adminId = req.params.id;
+  
+    // try {
+    //   const admin = await Admin.findByIdAndUpdate(adminId, {
+    //     email,
+    //     password
+    //   });
+    //   res.json(admin);
   } catch (err) {
     console.error('Admin güncelleme hatası:', err);
     res.status(500).json({ error: 'Admin güncellenirken bir hata oluştu.' });

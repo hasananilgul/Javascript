@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
   phone: { 
     type: String,
     unique: true },
-  role: { 
+    role: { 
     type: String, 
     default: 'USER' },
   deletedAt: Date,

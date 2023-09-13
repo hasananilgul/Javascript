@@ -1,7 +1,7 @@
 var _sayilar = document.getElementsByTagName("button"),
     _sayiUzunluk = _sayilar.length,
     i = 0,
-    _sonuc = document.getElementById("sonuc:"),
+    _sonuc = document.getElementById("sonuc"),
     _deleteButton = document.getElementById("delete");
 
     for (i = 0; i < _sayiUzunluk; i++) {
@@ -9,7 +9,7 @@ var _sayilar = document.getElementsByTagName("button"),
   }
 
   _deleteButton.onclick = function() {
-    _sonuc.value = "";
+    _sonuc.value = " ";
   }
   
   function hesapla() {

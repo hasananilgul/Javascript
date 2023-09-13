@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user'); // Kullanıcı modelini doğru şekilde dahil edin
-
+const Book = require('../models/books')
 // Kayıt ol endpoint'i
 router.post('/kayit', async (req, res) => {
   const { username, gender, email, phone, password } = req.body;
@@ -99,6 +99,18 @@ router.put('/update-username/:id', async (req, res) => {
   }
 });
 
-
+// Kitap ismine göre arama yap 
+router.get('/search-books', async (req, res) => {
+  const { title } = req.query; // Kullanıcıdan gelen kitap adı
+    try {
+      const { title } = req.query;
+      const books = await Book.find({ title });
+  
+      res.json(books);
+    } catch (err) {
+      console.error('Kitap arama hatası:', err);
+      res.status(500).json({ error: 'Kitap aranırken bir hata oluştu.' });
+    }
+  });
 
 module.exports = router;
