@@ -19,7 +19,7 @@ router.post('/borrow-book', async (req, res) => {
         return res.status(404).json({ error: 'Kitap bulunamadı.' });
       }
   
-      // Kullanıcının borrowedBooks alanını kontrol etmeden önce tanımlı olduğunu doğrulayın
+      // Kullanıcının borrowedBooks alanını kontrol etmeden önce tanımlı olduğunu doğrulama
       if (!user.borrowedBooks) {
         user.borrowedBooks = [];
       }
