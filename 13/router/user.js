@@ -45,7 +45,7 @@ router.post('/giris', async (req, res) => {
     if (user) {
       // Kullanıcıyı bulduysanız, şifreyi karşılaştırın
       const passwordMatched = await bcrypt.compare(password, user.password);
-
+6666666
       if (passwordMatched) {
         // Giriş başarılı
         const token = jwt.sign({ username }, 'secretKey');
@@ -99,18 +99,44 @@ router.put('/update-username/:id', async (req, res) => {
   }
 });
 
+//! book hatalar.
+//! token kullnılacak
+
+
+
 // Kitap ismine göre arama yap 
 router.get('/search-books', async (req, res) => {
-  const { title } = req.query; // Kullanıcıdan gelen kitap adı
-    try {
-      const { title } = req.query;
-      const books = await Book.find({ title });
-  
-      res.json(books);
-    } catch (err) {
-      console.error('Kitap arama hatası:', err);
-      res.status(500).json({ error: 'Kitap aranırken bir hata oluştu.' });
+  const { title } = req.query; // Kullanıcıdan gelen kitap adı //?title=
+  try {
+    const user = await User.findById(req.userId).populate('borrowedBooks');
+
+    if (!user) {
+      return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
     }
-  });
+
+    const books = await Book.find({ title });
+
+    const filteredBooks = books.filter(book => {
+      // Kullanıcının sahip olduğu kitabı filtrele
+      if (book.holderBy && book.holderBy.equals(user._id)) {
+        return false;
+      }
+
+      // Başka bir kullanıcının sahip olduğu kitabı filtrele
+      if (book.holderBy && !book.holderBy.equals(user._id)) {
+        return false;
+      }
+
+      return true;
+    });
+
+    res.json(filteredBooks);
+  } catch (err) {
+    console.error('Kitap arama hatası:', err);
+    res.status(500).json({ error: 'Kitap aranırken bir hata oluştu.' });
+  }
+});
+
+
 
 module.exports = router;

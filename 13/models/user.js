@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema({
     type: String, 
     default: 'USER' },
   deletedAt: Date,
-  deletedBy: String
+  deletedBy: String,
+  borrowedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }]
 }, { collection: 'users' });
 
 userSchema.pre('save', async function (next) {

@@ -6,17 +6,6 @@ const Admin = require('../models/admin'); // Admin modelini dahil edin
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Tüm kitapları getir
-router.get('/gettall-book', async (req, res) => {
-  try {
-    const books = await Book.find();
-    res.json(books);
-  } catch (err) {
-    console.error('Kitaplar getirme hatası:', err);
-    res.status(500).json({ error: 'Kitaplar getirilirken bir hata oluştu.' });
-  }
-});
-
 // Yeni bir kitap oluşturun
 router.post('/books', async (req, res) => {
   const { title, writtenBy, inside, holderTime, createdAt } = req.body;

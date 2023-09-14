@@ -5,7 +5,7 @@ const Admin = require('./models/admin');
 const app = express();
 
 // Kullanıcı kimlik doğrulaması
-app.post('/api/usersBookTask/user/giris', async (req, res) => {
+app.post('user/giris', async (req, res) => {
   // Kullanıcı verilerini al
   const { username, password } = req.body;
 
@@ -25,7 +25,7 @@ app.post('/api/usersBookTask/user/giris', async (req, res) => {
   res.status(200).send({ token });
 });
 
-app.post('/api/usersBookTask/admin/adminsGiris', async (req, res) => {
+app.post('admin/adminGiris', async (req, res) => {
   // Kullanıcı verilerini al
   const { email, password } = req.body;
 

@@ -6,7 +6,7 @@ const bookSchema = new mongoose.Schema({
     unique: true },
   writtenBy: String,
   inside: String,
-  holderTime: Number,
+  holderTime: null,
   holderBy: { 
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User' },
@@ -16,7 +16,12 @@ const bookSchema = new mongoose.Schema({
     ref: 'User' },
   createdAt: { 
     type: Date,
-    default: Date.now }
+    default: Date.now },
+    borrower: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
+
 });
 
 const Book = mongoose.model('Book', bookSchema);
