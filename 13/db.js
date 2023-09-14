@@ -1,18 +1,13 @@
+require('dotenv').config(); // .env dosyasını yüklemek için
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://hasananilgul:Hasananil1234@nodeblog.epx7ynt.mongodb.net/nodeblog', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  
-});
-
-mongoose.connection.on('connected', () => {
-  console.log('MongoDB Atlas ile bağlantı kuruldu');
-});
-
-mongoose.connection.on('error', (err) => {
-  console.error('MongoDB Atlas bağlantı hatası:', err);
-});
-
-
+// MongoDB Atlas bağlantı URI'sini .env dosyasından alın veya doğrudan tanımlayın
+const uri = process.env.MONGODB_URI;
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('MongoDB Atlas ile bağlantı kuruldu');
+  })
+  .catch((error) => {
+    console.error('MongoDB Atlas bağlantı hatası:', error);
+  });
 module.exports = mongoose;

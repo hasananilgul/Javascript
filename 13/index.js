@@ -14,7 +14,9 @@ const port = process.env.PORT || 3000;
 const API_PREFIX = "/api/usersBookTask/";
 
 // Veritabanı bağlantısını oluşturur
-const mongoose = require('./db');
+
+const mongoose = require('./db.js'); 
+
 
 // Kullanıcı, Kitap ve Admin modellerini içeri aktarır
 const User = require('./models/user'); // Kullanıcı modeli
