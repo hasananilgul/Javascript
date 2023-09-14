@@ -6,7 +6,10 @@ const bookSchema = new mongoose.Schema({
     unique: true },
   writtenBy: String,
   inside: String,
-  holderTime: null,
+  holderTime: {
+    type: Date,
+    default: null 
+  },
   holderBy: { 
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User' },

@@ -15,7 +15,6 @@ router.get('/gettall-book', async (req, res) => {
   }
 });
 
-
 // Kitap ödünç alma rotası
 router.post('/borrow-book', async (req, res) => {
   try {
@@ -29,6 +28,11 @@ router.post('/borrow-book', async (req, res) => {
     const book = await Book.findById(bookId);
     if (!book) {
       return res.status(404).json({ error: 'Kitap bulunamadı.' });
+    }
+
+    // Kitabın zaten ödünç alınıp alınmadığını kontrol et
+    if (book.holderBy) {
+      return res.status(400).json({ error: 'Bu kitap zaten başka bir kullanıcı tarafından ödünç alınmış.' });
     }
     
     // Kullanıcının borrowedBooks alanını kontrol etmeden önce tanımlı olduğunu doğrulama
