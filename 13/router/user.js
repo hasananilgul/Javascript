@@ -3,7 +3,9 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user'); // Kullanıcı modelini doğru şekilde dahil edin
-const Book = require('../models/books')
+const Book = require('../models/books');
+const WishList = require('../models/wishList');
+
 // Kayıt ol endpoint'i
 router.post('/kayit', async (req, res) => {
   const { username, gender, email, phone, password } = req.body;
@@ -30,6 +32,7 @@ router.post('/kayit', async (req, res) => {
     res.status(500).send('Kayıt sırasında bir hata oluştu.');
   }
 });
+
 router.get('/giris', (req, res) => {
   res.render('giris');
 });
@@ -45,7 +48,6 @@ router.post('/giris', async (req, res) => {
     if (user) {
       // Kullanıcıyı bulduysanız, şifreyi karşılaştırın
       const passwordMatched = await bcrypt.compare(password, user.password);
-6666666
       if (passwordMatched) {
         // Giriş başarılı
         const token = jwt.sign({ username }, 'secretKey');
@@ -63,7 +65,6 @@ router.post('/giris', async (req, res) => {
     res.status(500).send('Giriş işlemi sırasında bir hata oluştu.');
   }
 });
-
 
 // Kullanıcıyı Silme endpoint'i
 router.delete('/delete/:id', async (req, res) => {
@@ -99,12 +100,7 @@ router.put('/update-username/:id', async (req, res) => {
   }
 });
 
-
-//! token kullnılacak
-
-
-
-// Kitap ismine göre arama yap 
+// Kitap ismine göre arama yap
 router.get('/search-books', async (req, res) => {
   const { title } = req.query; // Kullanıcıdan gelen kitap adı //?title=
   try {
@@ -137,6 +133,110 @@ router.get('/search-books', async (req, res) => {
   }
 });
 
+router.post('/wishlist', async (req, res) => {
+  try {
+    const { bookId, userId } = req.body;
+
+    // Kullanıcıyı bulun
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
+    }
+
+    // Kullanıcının istek listesini kontrol edin
+    if (!user.wishList) {
+      user.wishList = []; // Eğer istek listesi yoksa boş bir dizi oluşturun
+    }
+
+    // Eğer kitap zaten istek listesinde ise tekrar eklemeyin
+    if (user.wishList.includes(bookId)) {
+      return res.status(400).json({ error: 'Kitap zaten istek listesinde.' });
+    }
+
+    // Kitabı istek listesine ekleyin
+    user.wishList.push(bookId);
+    await user.save();
+
+    return res.send('Kitap istek listesine başarıyla eklendi.');
+  } catch (err) {
+    console.error('İstek listesine kitap ekleme hatası:', err);
+    return res.status(500).json({ error: 'İstek listesine kitap eklenirken bir hata oluştu.' });
+  }
+});
+
+
+// Kitabı istek listesinden sil
+router.delete('/wishlist/:bookId', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const { bookId } = req.params; // Silinmek istenen kitabın kimliği
+
+    // Kullanıcının istek listesini bul
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
+    }
+
+    // Kitabı istek listesinden sil
+    const index = user.wishList.indexOf(bookId);
+    if (index > -1) {
+      user.wishList.splice(index, 1);
+      await user.save();
+      return res.send('Kitap istek listesinden başarıyla silindi.');
+    } else {
+      return res.status(404).json({ error: 'Kitap istek listesinde bulunamadı.' });
+    }
+  } catch (err) {
+    console.error('İstek listesinden kitap silme hatası:', err);
+    return res.status(500).json({ error: 'İstek listesinden kitap silinirken bir hata oluştu.' });
+  }
+});
+
+router.get('/wishlist/', async (req, res) => {
+  try {
+    const { userId } = req.body; // Kullanıcının kimliği
+
+    // Kullanıcının varlığını kontrol et
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
+    }
+
+    // Kullanıcının istek listesini bul
+    const wishList = await WishList.find({ user: user._id });
+
+    // İstek listesini döndür
+    return res.json(user.wishList);
+  } catch (err) {
+    // Hata mesajını döndür
+    console.error('İstek listesi görüntüleme hatası:', err);
+    return res.status(500).json({ error: 'İstek listesi görüntülenirken bir hata oluştu.' });
+  }
+});
+
+// Tarihe göre sıralanmış istek listesini görüntüleme
+router.get('/wishlist/sorted-by-date', async (req, res) => {
+  try {
+    const { userId } = req.body; // Kullanıcının kimliği
+
+    // Kullanıcının varlığını kontrol et
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log(userId);
+      return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
+    }
+
+    // Kullanıcının istek listesini bul
+     user.wishList = await WishList.find({ user: user._id }).sort({ createdAt: -1 }); // İstek listesini tarihe göre sırala
+
+    // İstek listesini döndür
+    return res.json(user.wishList);
+  } catch (err) {
+    // Hata mesajını döndür
+    console.error('Tarihe göre sıralanmış istek listesi görüntüleme hatası:', err);
+    return res.status(500).json({ error: 'Tarihe göre sıralanmış istek listesi görüntülenirken bir hata oluştu.' });
+  }
+});
 
 
 module.exports = router;
