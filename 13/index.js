@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 3000;
 
 // API rotalarının başına ekleyeceğimiz ön ek
-const API_PREFIX = "/api/usersBookTask/";
+const API_PREFIX = "/api/";
 
 // Veritabanı bağlantısını oluşturur
 
@@ -22,6 +22,7 @@ const mongoose = require('./db.js');
 const User = require('./models/user'); // Kullanıcı modeli
 const Book = require('./models/books'); // Kitaplar modeli
 const Admin = require('./models/admin'); // Admin modeli
+const WhishList = require('./models/wishList'); // Whishlist modeli
 
 // Kullanıcı rotalarını içeren router dosyasını içeri aktarır
 const userRouter = require('./router/user'); // user.js dosyasını dahil edin
