@@ -67,7 +67,7 @@ router.post('/giris', async (req, res) => {
 });
 
 // Kullanıcıyı Silme endpoint'i
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/', async (req, res) => {
   try {
     const userId = req.params.id.trim(); // Gelen id'den gereksiz karakterleri kaldır
     const deletedUser = await User.findByIdAndRemove(userId);
@@ -105,14 +105,19 @@ router.get('/search-books', async (req, res) => {
   const { title } = req.body; // Kullanıcıdan gelen kitap adı
   try {
     const books = await Book.find({ title });
-    res.json(books);
+    if(!books){
+      return res.status(404).json({ error: 'Kitap bulunamadı.' });
+    }
+    else{
+      res.json(books);
+    }
   } catch (err) {
     console.error('Kitap arama hatası:', err);
     res.status(500).json({ error: 'Kitap aranırken bir hata oluştu.' });
   }
 });
 
-router.post('/wishlist', async (req, res) => {
+router.post('/wishlist/', async (req, res) => {
   try {
     const { bookId, userId } = req.body;
 
@@ -142,7 +147,6 @@ router.post('/wishlist', async (req, res) => {
     return res.status(500).json({ error: 'İstek listesine kitap eklenirken bir hata oluştu.' });
   }
 });
-
 
 // Kitabı istek listesinden sil
 router.delete('/wishlist/', async (req, res) => {
@@ -178,7 +182,6 @@ router.get('/wishlist/', async (req, res) => {
     // Kullanıcının varlığını kontrol et
     const user = await User.findById(userId);
     if (!user) {
-      console.log(userId)
       return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
     }
 
@@ -236,10 +239,5 @@ router.get('/wishlist/sorted-by-date/', async (req, res) => {
     return res.status(500).json({ error: 'Tarihe göre sıralanmış istek listesi görüntülenirken bir hata oluştu.' });
   }
 });
-
-
-
-
-
 
 module.exports = router;
