@@ -199,20 +199,35 @@ router.get('/wishlist/', async (req, res) => {
     // Kullanıcının varlığını kontrol et
     const user = await User.findById(userId);
     if (!user) {
+      console.log(userId)
       return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
     }
 
     // Kullanıcının istek listesini bul
-    const wishList = await WishList.find({ user: user._id });
+    const wishList = user.wishList;
 
-    // İstek listesini döndür
-    return res.json(user.wishList);
+    if (wishList.length === 0) {
+      return res.json("İstek listesi boş.");
+    } else {
+      // Kullanıcının istek listesindeki kitapları ayrı ayrı çekin ve kitap bilgileri ile birlikte doldurun
+      const populatedWishList = await Promise.all(
+        wishList.map(async (item) => {
+          const book = await Book.findById(item);
+          return book;
+        })
+      );
+
+      return res.json(populatedWishList);
+    }
   } catch (err) {
     // Hata mesajını döndür
     console.error('İstek listesi görüntüleme hatası:', err);
     return res.status(500).json({ error: 'İstek listesi görüntülenirken bir hata oluştu.' });
   }
 });
+
+
+
 
 // Tarihe göre sıralanmış istek listesini görüntüleme
 router.get('/wishlist/sorted-by-date/', async (req, res) => {
