@@ -15,23 +15,24 @@ router.get('/gettall-book', async (req, res) => {
   }
 });
 
-// Kitap ödünç alma rotası
 router.post('/borrow-book', async (req, res) => {
   try {
     const { bookId, userId } = req.body;
 
     const user = await User.findById(userId);
     if (!user) {
+      console.log(userId)
       return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
     }
 
     const book = await Book.findById(bookId);
     if (!book) {
+      console.log(bookId)
       return res.status(404).json({ error: 'Kitap bulunamadı.' });
     }
 
     // Kitabın zaten ödünç alınıp alınmadığını kontrol et
-    if (book.holderBy) {
+    if (book.holderBy !== undefined && book.holderBy !== null) {
       return res.status(400).json({ error: 'Bu kitap zaten başka bir kullanıcı tarafından ödünç alınmış.' });
     }
     
@@ -39,7 +40,7 @@ router.post('/borrow-book', async (req, res) => {
     if (!user.borrowedBooks) {
       user.borrowedBooks = [];
     }
-
+    console.log(user.borrowedBooks)
     if (user.borrowedBooks.length >= 3) {
       return res.status(400).json({ error: 'Maksimum 3 kitap ödünç alabilirsiniz.' });
     }
@@ -47,18 +48,19 @@ router.post('/borrow-book', async (req, res) => {
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 1); // Ödünç alma süresi 1 gün
 
-    book.holderBy = user._id;
+    book.holderBy = userId;
     book.holderTime = dueDate;
     await book.save();
 
-    user.borrowedBooks.push(book._id);
+    user.borrowedBooks.push(bookId);
     await user.save();
 
-    res.json({ message: 'Kitap ödünç alındı.', book});
+    res.json({ message: 'Kitap ödünç alındı.', book });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // kullanıcının ödünç aldıkları kitapları getir list-books?userId=
 router.get('/list-books', async (req, res) => {
@@ -83,8 +85,9 @@ router.get('/list-books', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 // kullanıcın ödünç aldıkları kitabı silmek
-router.delete('/wishlist/', async (req, res) => {
+router.delete('/book/', async (req, res) => {
   try {
     const { userId } = req.body;
     const { bookId } = req.body; // Silinmek istenen kitabın kimliği
