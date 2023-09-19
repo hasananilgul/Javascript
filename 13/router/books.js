@@ -45,7 +45,7 @@ router.post('/borrow-book', async (req, res) => {
     }
 
     const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + 7); // Ödünç alma süresi 7 gün
+    dueDate.setDate(dueDate.getDate() + 1); // Ödünç alma süresi 1 gün
 
     book.holderBy = user._id;
     book.holderTime = dueDate;
@@ -60,7 +60,7 @@ router.post('/borrow-book', async (req, res) => {
   }
 });
 
-// Kitapları getir list-books?userId=
+// kullanıcının ödünç aldıkları kitapları getir list-books?userId=
 router.get('/list-books', async (req, res) => {
   try {
     const { userId } = req.query; // Kullanıcı kimliğini sorgu parametresi olarak al
@@ -81,6 +81,36 @@ router.get('/list-books', async (req, res) => {
     res.json({ message: 'Ödünç alınan kitaplar listelendi.', books });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/wishlist/', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const { bookId } = req.body; // Silinmek istenen kitabın kimliği
+
+    // Kullanıcının istek listesini bul
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
+    }
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return res.status(404).json({ error: 'Kitap bulunamadı.' });
+    }
+    // Kitabı istek listesinden sil
+    const index = user.borrowedBooks.indexOf(bookId);
+    if (index > -1) {
+      user.borrowedBooks.splice(index, 1);
+      await user.save();
+      return res.send('Kitap ödünç alma listesinden başarıyla silindi.');
+    } else {
+      console.log(borrowedBooks)
+      return res.status(404).json({ error: 'Kitap ödünç alma listesinde bulunamadı.' });
+    }
+  } catch (err) {
+    console.error('ödünç alma listesinden kitap silme hatası:', err);
+    return res.status(500).json({ error: 'ödünç alma listesinde bu kitap yok silemezsin.' });
   }
 });
 
