@@ -83,22 +83,23 @@ router.get('/list-books', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
+// kullanıcın ödünç aldıkları kitabı silmek
 router.delete('/wishlist/', async (req, res) => {
   try {
     const { userId } = req.body;
     const { bookId } = req.body; // Silinmek istenen kitabın kimliği
 
-    // Kullanıcının istek listesini bul
+    // Kullanıcıyı bul
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
     }
+    // kitabı bul
     const book = await Book.findById(bookId);
     if (!book) {
       return res.status(404).json({ error: 'Kitap bulunamadı.' });
     }
-    // Kitabı istek listesinden silmek
+    // Kitabı ödünç alma listesinden silmek
     const index = user.borrowedBooks.indexOf(bookId);
     if (index > -1) {
       user.borrowedBooks.splice(index, 1);
