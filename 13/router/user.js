@@ -209,7 +209,7 @@ router.get('/wishlist/', async (req, res) => {
       return res.json(populatedWishList);
     }
   } catch (err) {
-    // Hata mesajını döndür
+    // Hata mesajını döndürür
     console.error('İstek listesi görüntüleme hatası:', err);
     return res.status(500).json({ error: 'İstek listesi görüntülenirken bir hata oluştu.' });
   }
