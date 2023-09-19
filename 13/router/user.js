@@ -102,31 +102,10 @@ router.put('/update-username/:id', async (req, res) => {
 
 // Kitap ismine göre arama yap
 router.get('/search-books', async (req, res) => {
-  const { title } = req.query; // Kullanıcıdan gelen kitap adı //?title=
+  const { title } = req.body; // Kullanıcıdan gelen kitap adı
   try {
-    const user = await User.findById(req.userId).populate('borrowedBooks');
-
-    if (!user) {
-      return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
-    }
-
     const books = await Book.find({ title });
-
-    const filteredBooks = books.filter(book => {
-      // Kullanıcının sahip olduğu kitabı filtrele
-      if (book.holderBy && book.holderBy.equals(user._id)) {
-        return false;
-      }
-
-      // Başka bir kullanıcının sahip olduğu kitabı filtrele
-      if (book.holderBy && !book.holderBy.equals(user._id)) {
-        return false;
-      }
-
-      return true;
-    });
-
-    res.json(filteredBooks);
+    res.json(books);
   } catch (err) {
     console.error('Kitap arama hatası:', err);
     res.status(500).json({ error: 'Kitap aranırken bir hata oluştu.' });
@@ -166,7 +145,7 @@ router.post('/wishlist', async (req, res) => {
 
 
 // Kitabı istek listesinden sil
-router.delete('/wishlist/:bookId', async (req, res) => {
+router.delete('/wishlist/', async (req, res) => {
   try {
     const { userId } = req.body;
     const { bookId } = req.params; // Silinmek istenen kitabın kimliği
@@ -191,7 +170,7 @@ router.delete('/wishlist/:bookId', async (req, res) => {
     return res.status(500).json({ error: 'İstek listesinden kitap silinirken bir hata oluştu.' });
   }
 });
-
+// Kullanıcının istek listesindeki kitaplarını listelemek için
 router.get('/wishlist/', async (req, res) => {
   try {
     const { userId } = req.body; // Kullanıcının kimliği
@@ -209,7 +188,7 @@ router.get('/wishlist/', async (req, res) => {
     if (wishList.length === 0) {
       return res.json("İstek listesi boş.");
     } else {
-      // Kullanıcının istek listesindeki kitapları ayrı ayrı çekin ve kitap bilgileri ile birlikte doldurun
+      // Kullanıcının istek listesindeki kitapları ayrı ayrı çekip ve kitap bilgileri ile birlikte listeleyin
       const populatedWishList = await Promise.all(
         wishList.map(async (item) => {
           const book = await Book.findById(item);
@@ -225,9 +204,6 @@ router.get('/wishlist/', async (req, res) => {
     return res.status(500).json({ error: 'İstek listesi görüntülenirken bir hata oluştu.' });
   }
 });
-
-
-
 
 // Tarihe göre sıralanmış istek listesini görüntüleme
 router.get('/wishlist/sorted-by-date/', async (req, res) => {
