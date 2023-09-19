@@ -98,7 +98,7 @@ router.delete('/wishlist/', async (req, res) => {
     if (!book) {
       return res.status(404).json({ error: 'Kitap bulunamadı.' });
     }
-    // Kitabı istek listesinden sil
+    // Kitabı istek listesinden silmek
     const index = user.borrowedBooks.indexOf(bookId);
     if (index > -1) {
       user.borrowedBooks.splice(index, 1);
