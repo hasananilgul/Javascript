@@ -69,7 +69,7 @@ router.post('/giris', async (req, res) => {
 // Kullanıcıyı Silme endpoint'i
 router.delete('/delete/', async (req, res) => {
   try {
-    const userId = req.params.id.trim(); // Gelen id'den gereksiz karakterleri kaldır
+    const userId = req.body.id.trim(); // Gelen id'den gereksiz karakterleri kaldır
     const deletedUser = await User.findByIdAndRemove(userId);
     if (deletedUser) {
       res.send('Kullanıcı başarıyla silindi.');
@@ -152,14 +152,19 @@ router.post('/wishlist/', async (req, res) => {
 router.delete('/wishlist/', async (req, res) => {
   try {
     const { userId } = req.body;
-    const { bookId } = req.params; // Silinmek istenen kitabın kimliği
+    const { bookId } = req.body; // Silinmek istenen kitabın kimliği
 
     // Kullanıcının istek listesini bul
     const user = await User.findById(userId);
     if (!user) {
+      
       return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
     }
-
+    const book = await Book.findById(bookId);
+    if (!book) {
+      
+      return res.status(404).json({ error: 'Kitap bulunamadı.' });
+    }
     // Kitabı istek listesinden sil
     const index = user.wishList.indexOf(bookId);
     if (index > -1) {
@@ -167,6 +172,7 @@ router.delete('/wishlist/', async (req, res) => {
       await user.save();
       return res.send('Kitap istek listesinden başarıyla silindi.');
     } else {
+      console.log(bookId)
       return res.status(404).json({ error: 'Kitap istek listesinde bulunamadı.' });
     }
   } catch (err) {
@@ -174,6 +180,7 @@ router.delete('/wishlist/', async (req, res) => {
     return res.status(500).json({ error: 'İstek listesinden kitap silinirken bir hata oluştu.' });
   }
 });
+
 // Kullanıcının istek listesindeki kitaplarını listelemek için
 router.get('/wishlist/', async (req, res) => {
   try {
