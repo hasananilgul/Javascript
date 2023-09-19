@@ -215,28 +215,40 @@ router.get('/wishlist/', async (req, res) => {
 });
 
 // Tarihe göre sıralanmış istek listesini görüntüleme
-router.get('/wishlist/sorted-by-date', async (req, res) => {
+router.get('/wishlist/sorted-by-date/', async (req, res) => {
   try {
     const { userId } = req.body; // Kullanıcının kimliği
 
     // Kullanıcının varlığını kontrol et
     const user = await User.findById(userId);
     if (!user) {
-      console.log(userId);
       return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
     }
 
-    // Kullanıcının istek listesini bul
-     user.wishList = await WishList.find({ user: user._id }).sort({ createdAt: -1 }); // İstek listesini tarihe göre sırala
+    // Kullanıcının istek listesini tarihe göre sırala
+    const wishList = user.wishList.sort((a, b) => b.createdAt - a.createdAt);
 
-    // İstek listesini döndür
-    return res.json(user.wishList);
+    if (wishList.length === 0) {
+      return res.json("İstek listesi boş.");
+    } else {
+      // Kullanıcının istek listesindeki kitapları ayrı ayrı çekin
+      const populatedWishList = [];
+      for (const item of wishList) {
+        const book = await Book.findById(item);
+        populatedWishList.push(book);
+      }
+      return res.json(populatedWishList);
+    }
   } catch (err) {
     // Hata mesajını döndür
     console.error('Tarihe göre sıralanmış istek listesi görüntüleme hatası:', err);
     return res.status(500).json({ error: 'Tarihe göre sıralanmış istek listesi görüntülenirken bir hata oluştu.' });
   }
 });
+
+
+
+
 
 
 module.exports = router;
